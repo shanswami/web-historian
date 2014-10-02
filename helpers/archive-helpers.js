@@ -28,15 +28,17 @@ exports.initialize = function(pathsObj){
 exports.readListOfUrls = function(func){
   fs.readFile(this.paths.list, function (err, data) {
     return func(data.toString().split('\n'));
-    // return func.apply(this.paths.list);
   })
 };
 
-exports.isUrlInList = function(url, cb){
-  // console.log("a")
+exports.isUrlInList = function(url, cb, res){
   this.readListOfUrls(function(data){
+    console.log('data', data);
+    console.log('url', url);
     if (_.contains(data,url)) {
-      cb();
+      cb(res,200);
+    } else {
+      cb(res,404);
     }
   })
 };
