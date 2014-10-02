@@ -28,23 +28,17 @@ exports.initialize = function(pathsObj){
 exports.readListOfUrls = function(func){
   fs.readFile(this.paths.list, function (err, data) {
     return func(data.toString().split('\n'));
-  })
+  });
 };
 
 exports.isUrlInList = function(url, cb, res){
   this.readListOfUrls(function(data){
-    console.log('data', data);
-    console.log('url', url);
-    if (_.contains(data,url)) {
-      cb(res,200);
-    } else {
-      cb(res,404);
-    }
-  })
+    cb(res, _.contains(data,url));
+  });
 };
 
 exports.addUrlToList = function(url){
-  fs.appendFile(this.paths.list, url+'\n', 'utf8', function(stuff){console.log(stuff);} )
+  fs.appendFile(this.paths.list, url+'\n', 'utf8', function(stuff){console.log(url);} );
 };
 
 exports.isURLArchived = function(){

@@ -3,28 +3,27 @@ var archive = require('../helpers/archive-helpers');
 var responder = require('./http-helpers');
 // require more modules/folders here!
 
+var sendResponse = function(res, data, statCode){
+  res.writeHead(statCode, responder.headers);
+  res.end(data);
+};
+
 var actions = {
-  'GET': function (res, statCode) {
-    res.writeHead(statCode, archive.paths.list);
-    res.end('<input text = "'+ 'google' +'">');
+  'GET': function (res, req) {
+    if( req.url === '/' ){
+      sendResponse(res, '<input>'+archive.paths.list, 200);
+    }else {
+      archive.isUrlInList( req.url.slice(1), function(res, boolean) {
+        sendResponse(res, '<input text = "'+ 'google' +'">', boolean?200:404);
+      }, res );
+    }
+  },
+  'POST': function( res, req ){
+    archive.addUrlToList(req._postData.url);
+    sendResponse(res, null, 302);
   }
-}
+};
 
 exports.handleRequest = function (req, res) {
-
-  if( req.method === 'GET' ){
-    if( req.url === '/' ){
-      console.log('home')
-      res.writeHead(200, responder.headers);
-      res.end('<input>'+archive.paths.list);
-    }else {
-      archive.isUrlInList( req.url.slice(1), actions.GET, res );
-    }
-
-  }else if( req.method === 'POST' ) {
-    res.writeHead(302, responder.headers);
-    archive.addUrlToList('www.example.com');
-    res.end('fdsa')
-  }
-
+  actions[req.method](res, req);
 };

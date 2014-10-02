@@ -99,7 +99,7 @@ describe("html fetcher helpers", function(){
     waitForThen(
       function() { return resultArray; },
       function(){
-        expect(resultArray).to.deep.equal(urlArray);x
+        expect(resultArray).to.deep.equal(urlArray);
         done();
     });
   });
